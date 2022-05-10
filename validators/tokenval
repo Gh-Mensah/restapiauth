@@ -1,0 +1,18 @@
+const jwt = require("jsonwebtoken")
+const dotenv = require("dotenv")
+
+dotenv.config()
+
+const verifyToken = (req,res,next)=>{
+    const token = req.header("auth-token")
+    if(!token)res.status(403).json({error:"PLEASE PROVIDE YOUR TOKEN"})
+    else{
+        jwt.verify( token, process.env.TOKEN_SECRET , (err,verified) =>{
+            if(err) res.status(500).json({error:"FAILED TO AUTHENTICATE TOKEN"})
+            req.user = verified.data
+            next()
+        })
+    }
+}
+
+module.exports= verifyToken
